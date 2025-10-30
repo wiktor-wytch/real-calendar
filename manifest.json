@@ -1,11 +1,11 @@
 {
   "id": "real-calendar",
   "name": "Real Calendar",
-  "version": "0.1.0",
-  "minAppVersion": "1.0.0",
-  "description": "Displays a calendar with files tagged for specific dates",
-  "author": "Wiktor",
-  "authorUrl": "https://github.com/yourname",
+  "version": "0.0.1",
+  "minAppVersion": "1.10.0",
+  "description": "Create and manage timed events with day, week, and month calendar views.",
+  "author": "wiktor-wytch",
+  "authorUrl": "https://github.com/wiktor-wytch",
   "isDesktopOnly": false
 }
 
