@@ -1,0 +1,9 @@
+# Obsidian plugin
+node_modules/
+dist/
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
