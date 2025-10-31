@@ -9,7 +9,7 @@ module.exports = {
     file: 'main.js',
     format: 'cjs'
   },
-  external: ['obsidian'], // <-- tell Rollup not to bundle obsidian
+  external: ['obsidian'],
   plugins: [
     resolve(),
     commonjs(),
