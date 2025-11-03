@@ -3,6 +3,9 @@ node_modules/
 dist/
 *.log
 
+# Build artifacts
+main.js
+
 # IDEs
 .vscode/
 .idea/

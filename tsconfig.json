@@ -5,6 +5,6 @@
     "strict": true,
     "esModuleInterop": true
   },
-  "include": ["main.ts"]
+  "include": ["main.ts", "src/**/*"]
 }
 

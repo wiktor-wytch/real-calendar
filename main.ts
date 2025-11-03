@@ -50,13 +50,13 @@ export type ViewMode = 'month' | 'week' | 'day';
 export const VIEW_TYPE_REAL_CALENDAR = "real-calendar-view";
 
 export default class RealCalendarPlugin extends Plugin {
-  settings: RealCalendarSettings;
+  settings!: RealCalendarSettings;
   events: EventItem[] = [];
   currentMonth: number = new Date().getMonth();
   currentYear: number = new Date().getFullYear();
   currentDate: Date = new Date();
   viewMode: ViewMode = 'month';
-  private refreshTimeout: NodeJS.Timeout | null = null;
+  private refreshTimeout: number | null = null;
   private isInitialized: boolean = false;
   private loadPromise: Promise<void> | null = null;
   embedRenderers: RealCalendarEmbedRenderer[] = [];
@@ -139,7 +139,7 @@ export default class RealCalendarPlugin extends Plugin {
         }
       }
     } catch (err) {
-      console.warn("Could not parse embed options:", err);
+      // Silently fail on invalid embed options
     }
     return options;
   }
@@ -159,10 +159,9 @@ export default class RealCalendarPlugin extends Plugin {
     try {
       await this.loadEvents();
       this.isInitialized = true;
-      console.log("Calendar background initialization complete");
       this.refreshCalendarView();
     } catch (err) {
-      console.error("Calendar background init failed:", err);
+      // Background initialization failed, will retry on next access
     }
   }
 
@@ -181,7 +180,7 @@ export default class RealCalendarPlugin extends Plugin {
 
   private debouncedRefresh() {
     if (this.refreshTimeout) clearTimeout(this.refreshTimeout);
-    this.refreshTimeout = setTimeout(async () => {
+    this.refreshTimeout = window.setTimeout(async () => {
       await this.rescanVault();
       this.refreshCalendarView();
     }, 10000);
@@ -206,22 +205,20 @@ export default class RealCalendarPlugin extends Plugin {
           }
         }
         this.events = validEvents;
-        console.log(`Loaded ${this.events.length} cached events from ${this.settings.eventFolder || 'all folders'}`);
         if (this.events.length > 0) this.validateCacheInBackground();
         else await this.rescanVault();
         return;
       }
     } catch (err) {
-      console.warn("No cached event data found:", err);
+      // No cached data, will rescan vault
     }
     await this.rescanVault();
   }
 
   private async validateCacheInBackground() {
-    setTimeout(async () => {
+    window.setTimeout(async () => {
       const hasChanges = await this.checkForStaleCache();
       if (hasChanges) {
-        console.log("Cache stale, rescanning vault");
         await this.rescanVault();
         this.refreshCalendarView();
       }
@@ -250,7 +247,6 @@ export default class RealCalendarPlugin extends Plugin {
     }
     this.events = events;
     await this.saveData({ ...this.settings, events: this.events });
-    console.log(`Vault scanned: ${events.length} events loaded from ${this.settings.eventFolder || 'all folders'}`);
   }
 
   async updateSingleFile(file: TFile) {
@@ -268,7 +264,7 @@ export default class RealCalendarPlugin extends Plugin {
       await this.saveData({ ...this.settings, events: this.events });
       this.refreshCalendarView();
     } catch (err) {
-      console.error("Error updating event:", file.path, err);
+      // Failed to update event, will be picked up on next rescan
     }
   }
 
@@ -332,7 +328,7 @@ export default class RealCalendarPlugin extends Plugin {
       try {
         (leaf.view as RealCalendarView).renderCalendar();
       } catch (err) {
-        console.error("Error refreshing calendar view:", err);
+        // Failed to refresh view
       }
     });
 
@@ -341,7 +337,7 @@ export default class RealCalendarPlugin extends Plugin {
       try {
         renderer.refresh();
       } catch (err) {
-        console.error("Error refreshing calendar embed:", err);
+        // Failed to refresh embed
       }
     });
   }

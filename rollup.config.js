@@ -3,6 +3,8 @@ const commonjs = require('@rollup/plugin-commonjs');
 const { terser } = require('rollup-plugin-terser');
 const typescript = require('@rollup/plugin-typescript');
 
+const isProduction = process.env.NODE_ENV !== 'development';
+
 module.exports = {
   input: 'main.ts',
   output: {
@@ -14,7 +16,7 @@ module.exports = {
     resolve(),
     commonjs(),
     typescript({ tsconfig: './tsconfig.json' }),
-    terser()
+    ...(isProduction ? [terser()] : [])
   ]
 };
 

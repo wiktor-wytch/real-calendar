@@ -190,7 +190,6 @@ export class CreateEventModal extends Modal {
       this.close();
 
     } catch (error) {
-      console.error("Error creating event:", error);
       new Notice("Error creating event. The file might already exist.");
     }
   }

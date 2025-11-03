@@ -40,7 +40,6 @@ export class RealCalendarView extends ItemView {
             await this.plugin.app.vault.trash(file, true);
             new Notice(`Moved "${file.basename}" to trash`);
           } catch (err) {
-            console.error("Error trashing file:", err);
             new Notice("Failed to move file to trash.");
           }
         })

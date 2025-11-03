@@ -1,10 +1,12 @@
 {
-  "name": "tag-calendar",
-  "version": "1.0.0",
+  "name": "real-calendar",
+  "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c",
+    "dev": "rollup -c --watch",
+    "build:dev": "rollup -c --environment NODE_ENV:development"
   },
   "keywords": [],
   "author": "",

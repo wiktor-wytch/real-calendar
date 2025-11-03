@@ -14,7 +14,7 @@ export class RealCalendarSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    new Setting(containerEl).setName("Real Calendar Settings").setHeading();
+    new Setting(containerEl).setName("Real Calendar").setHeading();
 
     new Setting(containerEl)
       .setName("Event folder")
@@ -61,7 +61,7 @@ export class RealCalendarSettingTab extends PluginSettingTab {
           }, 2000);
         }));
 
-    new Setting(containerEl).setName("Frontmatter customization").setHeading();
+    new Setting(containerEl).setName("Frontmatter").setHeading();
     containerEl.createDiv({ cls: "setting-item-description" }).createEl("p", {
       text: "Customize which fields appear in the frontmatter of new events and their order."
     });
