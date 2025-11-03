@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "minAppVersion": "1.0.0",
   "description": "Displays a calendar with files tagged for specific dates",
-  "author": "Wiktor",
-  "authorUrl": "",
+  "author": "wiktor-wytch",
+  "authorUrl": "https://github.com/wiktor-wytch",
   "isDesktopOnly": false
 }
 
