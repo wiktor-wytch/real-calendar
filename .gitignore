@@ -6,6 +6,9 @@ dist/
 # Build artifacts
 main.js
 
+# User data
+data.json
+
 # IDEs
 .vscode/
 .idea/
