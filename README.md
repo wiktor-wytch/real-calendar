@@ -259,6 +259,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - 💡 **Feature Requests**: [GitHub Discussions](https://github.com/wiktor-wytch/real-calendar/discussions)
 - 📧 **Contact**: [GitHub Profile](https://github.com/wiktor-wytch)
 
+## Roadmap
+
+<!-- Roadmap content will be added here -->
+
 ## License
 
 This project is licensed under the ISC License.
