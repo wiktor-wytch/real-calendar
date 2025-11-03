@@ -1,7 +1,7 @@
 {
   "id": "real-calendar",
   "name": "Real Calendar",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "minAppVersion": "1.0.0",
   "description": "Displays a calendar with files tagged for specific dates",
   "author": "wiktor-wytch",
