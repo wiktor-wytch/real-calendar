@@ -146,13 +146,13 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
 
       const menu = new Menu();
       menu.addItem(item => item
-        .setTitle("Move to Trash")
+        .setTitle("Move to trash")
         .setIcon("trash")
         .onClick(async () => {
           try {
             await this.plugin.app.vault.trash(file, true);
             new Notice(`Moved "${file.basename}" to trash`);
-          } catch (err) {
+          } catch {
             new Notice("Failed to move file to trash.");
           }
         })
@@ -174,14 +174,14 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
     const today = new Date();
     const todayStr = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
 
-    let startOffset = this.plugin.settings.weekStartDay === 1 ? (firstDay === 0 ? 6 : firstDay - 1) : firstDay;
+    const startOffset = this.plugin.settings.weekStartDay === 1 ? (firstDay === 0 ? 6 : firstDay - 1) : firstDay;
     for (let i = 0; i < startOffset; i++) grid.createEl("div", { cls: "calendar-day empty" });
 
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${this.currentYear}-${(this.currentMonth + 1).toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
       const dayEl = grid.createEl("div", { cls: "calendar-day" });
       if (dateStr === todayStr) dayEl.addClass("today");
-      const label = dayEl.createEl("div", { cls: "day-label", text: day.toString() });
+      dayEl.createEl("div", { cls: "day-label", text: day.toString() });
 
       const dayEvents = this.getFilteredEvents(dateStr);
       dayEvents.forEach(e => {
@@ -218,7 +218,7 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
       const dayEvents = this.getFilteredEvents(dateStr);
 
       if (dayEvents.length === 0) {
-        const emptyEl = eventsContainer.createEl("div", { text: "No events", cls: "calendar-event empty-event" });
+        eventsContainer.createEl("div", { text: "No events", cls: "calendar-event empty-event" });
       } else {
         dayEvents.forEach(e => {
           const eventText = e.startTime ? `${e.startTime} ${e.title}` : e.title;
@@ -262,9 +262,11 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
 
         const statusEl = eventItem.createEl("div", { cls: "day-event-status" });
         if (e.done) {
+          // eslint-disable-next-line obsidianmd/ui/sentence-case
           statusEl.setText("✓ Completed");
           statusEl.addClass("event-done");
         } else if (e.date < todayStr) {
+          // eslint-disable-next-line obsidianmd/ui/sentence-case
           statusEl.setText("⚠ Overdue");
           statusEl.addClass("event-overdue");
         }

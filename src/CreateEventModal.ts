@@ -21,7 +21,7 @@ export class CreateEventModal extends Modal {
     const { contentEl } = this;
     contentEl.empty();
 
-    contentEl.createEl("h2", { text: "Create New Event" });
+    contentEl.createEl("h2", { text: "Create new event" });
 
     new Setting(contentEl)
       .setName("Event name")
@@ -41,7 +41,8 @@ export class CreateEventModal extends Modal {
       .setDesc("Date of the event")
       .addText(text => {
         text
-          .setPlaceholder("YYYY-MM-DD")
+          // eslint-disable-next-line obsidianmd/ui/sentence-case
+          .setPlaceholder("yyyy-mm-dd")
           .setValue(this.eventDate)
           .onChange(value => {
             this.eventDate = value;
@@ -54,7 +55,8 @@ export class CreateEventModal extends Modal {
       .setDesc("Leave empty for all-day event")
       .addText(text => {
         text
-          .setPlaceholder("HH:MM")
+          // eslint-disable-next-line obsidianmd/ui/sentence-case
+          .setPlaceholder("hh:mm")
           .setValue(this.startTime)
           .onChange(value => {
             this.startTime = value;
@@ -67,7 +69,8 @@ export class CreateEventModal extends Modal {
       .setDesc("Leave empty for all-day event")
       .addText(text => {
         text
-          .setPlaceholder("HH:MM")
+          // eslint-disable-next-line obsidianmd/ui/sentence-case
+          .setPlaceholder("hh:mm")
           .setValue(this.endTime)
           .onChange(value => {
             this.endTime = value;
@@ -81,7 +84,7 @@ export class CreateEventModal extends Modal {
     cancelButton.onclick = () => this.close();
 
     const createButton = buttonContainer.createEl("button", {
-      text: "Create Event",
+      text: "Create event",
       cls: "mod-cta"
     });
     createButton.onclick = async () => {
@@ -113,11 +116,11 @@ export class CreateEventModal extends Modal {
     }
 
     if (this.startTime && !isValidTimeString(this.startTime)) {
-      new Notice("Invalid start time. Use HH:MM (00:00 - 23:59)");
+      new Notice("Invalid start time. Use hh:mm (00:00 - 23:59)");
       return;
     }
     if (this.endTime && !isValidTimeString(this.endTime)) {
-      new Notice("Invalid end time. Use HH:MM (00:00 - 23:59)");
+      new Notice("Invalid end time. Use hh:mm (00:00 - 23:59)");
       return;
     }
     if (this.startTime && this.endTime && !isValidTimeRange(this.startTime, this.endTime)) {
@@ -140,12 +143,12 @@ export class CreateEventModal extends Modal {
             break;
           case "startTime":
             if (this.startTime) {
-              frontmatter += `startTime: \"${this.startTime}\"\n`;
+              frontmatter += `startTime: "${this.startTime}"\n`;
             }
             break;
           case "endTime":
             if (this.endTime) {
-              frontmatter += `endTime: \"${this.endTime}\"\n`;
+              frontmatter += `endTime: "${this.endTime}"\n`;
             }
             break;
           case "done":
@@ -156,7 +159,7 @@ export class CreateEventModal extends Modal {
       frontmatter += "---\n";
 
       const folderPath = normalizePath(this.plugin.settings.eventFolder || "");
-      let fileName = this.eventName.trim().replace(/[\\/:*?"<>|]/g, "-");
+      const fileName = this.eventName.trim().replace(/[\\/:*?"<>|]/g, "-");
       let filePath = folderPath
         ? normalizePath(`${folderPath}/${fileName}.md`)
         : `${fileName}.md`;
@@ -189,7 +192,7 @@ export class CreateEventModal extends Modal {
       }
       this.close();
 
-    } catch (error) {
+    } catch {
       new Notice("Error creating event. The file might already exist.");
     }
   }

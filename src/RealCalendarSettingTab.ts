@@ -14,12 +14,11 @@ export class RealCalendarSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    new Setting(containerEl).setName("Real Calendar").setHeading();
-
     new Setting(containerEl)
       .setName("Event folder")
       .setDesc("Folder where event files are stored (e.g., 'Actions/Events' or 'Calendar'). Leave empty to scan all folders.")
       .addText(text => text
+        // eslint-disable-next-line obsidianmd/ui/sentence-case
         .setPlaceholder("Actions/Events")
         .setValue(this.plugin.settings.eventFolder)
         .onChange(async (value) => {
@@ -114,23 +113,27 @@ export class RealCalendarSettingTab extends PluginSettingTab {
     exampleFrontmatter += "---";
     codeBlock.textContent = exampleFrontmatter;
 
-    containerEl.createEl("p", { text: 'Or use the command "Real Calendar: Create new event"' });
+    // eslint-disable-next-line obsidianmd/ui/sentence-case
+    containerEl.createEl("p", { text: 'Or use the command "Real calendar: Create new event"' });
 
     containerEl.createEl("p", { text: "Fields:" });
     const list = containerEl.createEl("ul");
     const tagsItem = list.createEl("li");
+    // eslint-disable-next-line obsidianmd/ui/sentence-case
     tagsItem.createEl("strong", { text: "tags: event" });
     tagsItem.appendText(" - Required. Must include 'event' tag.");
     const dateItem = list.createEl("li");
+    // eslint-disable-next-line obsidianmd/ui/sentence-case
     dateItem.createEl("strong", { text: "date" });
-    dateItem.appendText(" - Required. Format: YYYY-MM-DD");
+    dateItem.appendText(" - Required. Format: yyyy-mm-dd");
     const startTimeItem = list.createEl("li");
     startTimeItem.createEl("strong", { text: "startTime" });
-    startTimeItem.appendText(" - Optional. Format: HH:MM (in quotes)");
+    startTimeItem.appendText(" - Optional. Format: hh:mm (in quotes)");
     const endTimeItem = list.createEl("li");
     endTimeItem.createEl("strong", { text: "endTime" });
-    endTimeItem.appendText(" - Optional. Format: HH:MM (in quotes)");
+    endTimeItem.appendText(" - Optional. Format: hh:mm (in quotes)");
     const doneItem = list.createEl("li");
+    // eslint-disable-next-line obsidianmd/ui/sentence-case
     doneItem.createEl("strong", { text: "done" });
     doneItem.appendText(" - Optional. Set to true to mark as completed.");
 
@@ -143,12 +146,14 @@ export class RealCalendarSettingTab extends PluginSettingTab {
     containerEl.createEl("p", { text: "Embed options:" });
     const embedList = containerEl.createEl("ul");
     const viewItem = embedList.createEl("li");
+    // eslint-disable-next-line obsidianmd/ui/sentence-case
     viewItem.createEl("strong", { text: "view" });
     viewItem.appendText(" - month, week, or day");
     const completedItem = embedList.createEl("li");
     completedItem.createEl("strong", { text: "showCompleted" });
     completedItem.appendText(" - true or false (filters out completed events)");
     const folderItem = embedList.createEl("li");
+    // eslint-disable-next-line obsidianmd/ui/sentence-case
     folderItem.createEl("strong", { text: "folder" });
     folderItem.appendText(" - Filter events to a specific folder");
   }
@@ -166,8 +171,8 @@ export class RealCalendarSettingTab extends PluginSettingTab {
 
     this.plugin.settings.fieldOrder.forEach((field, index) => {
       const fieldEl = container.createDiv({ cls: "real-calendar-field-item" });
-      const dragHandle = fieldEl.createSpan({ text: "⋮⋮", cls: "drag-handle" });
-      const nameSpan = fieldEl.createSpan({ text: fieldNames[field] || field, cls: "field-name" });
+      fieldEl.createSpan({ text: "⋮⋮", cls: "drag-handle" });
+      fieldEl.createSpan({ text: fieldNames[field] || field, cls: "field-name" });
       const buttonContainer = fieldEl.createDiv({ cls: "field-buttons" });
 
       if (index > 0) {

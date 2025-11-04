@@ -66,7 +66,7 @@ export default class RealCalendarPlugin extends Plugin {
 
     this.registerView(VIEW_TYPE_REAL_CALENDAR, (leaf: WorkspaceLeaf) => new RealCalendarView(leaf, this));
 
-    this.addRibbonIcon("calendar-with-checkmark", "Open Calendar", async () => {
+    this.addRibbonIcon("calendar-with-checkmark", "Open calendar", async () => {
       await this.ensureInitialized();
       this.currentDate = new Date(this.currentYear, this.currentMonth, new Date().getDate());
       this.openCalendarView();
@@ -138,7 +138,7 @@ export default class RealCalendarPlugin extends Plugin {
           options.folder = parsed.folder;
         }
       }
-    } catch (err) {
+    } catch {
       // Silently fail on invalid embed options
     }
     return options;
@@ -160,7 +160,7 @@ export default class RealCalendarPlugin extends Plugin {
       await this.loadEvents();
       this.isInitialized = true;
       this.refreshCalendarView();
-    } catch (err) {
+    } catch {
       // Background initialization failed, will retry on next access
     }
   }
@@ -174,6 +174,9 @@ export default class RealCalendarPlugin extends Plugin {
     this.loadPromise = this.loadEvents().then(() => {
       this.isInitialized = true;
       this.loadPromise = null;
+    }).catch(() => {
+      this.isInitialized = false;
+      this.loadPromise = null;
     });
     await this.loadPromise;
   }
@@ -183,7 +186,7 @@ export default class RealCalendarPlugin extends Plugin {
     this.refreshTimeout = window.setTimeout(async () => {
       await this.rescanVault();
       this.refreshCalendarView();
-    }, 10000);
+    }, 10000) as unknown as number;
   }
 
   private isInEventFolder(filePath: string): boolean {
@@ -199,8 +202,8 @@ export default class RealCalendarPlugin extends Plugin {
       if (cached?.events && Array.isArray(cached.events)) {
         const validEvents: EventItem[] = [];
         for (const e of cached.events) {
-          const file = this.app.vault.getAbstractFileByPath(e.file?.path) as TFile;
-          if (file && this.isInEventFolder(file.path)) {
+          const file = this.app.vault.getAbstractFileByPath(e.file?.path);
+          if (file instanceof TFile && this.isInEventFolder(file.path)) {
             validEvents.push({ ...e, file });
           }
         }
@@ -209,15 +212,15 @@ export default class RealCalendarPlugin extends Plugin {
         else await this.rescanVault();
         return;
       }
-    } catch (err) {
+    } catch {
       // No cached data, will rescan vault
     }
     await this.rescanVault();
   }
 
-  private async validateCacheInBackground() {
-    window.setTimeout(async () => {
-      const hasChanges = await this.checkForStaleCache();
+  private validateCacheInBackground() {
+    void window.setTimeout(async () => {
+      const hasChanges = this.checkForStaleCache();
       if (hasChanges) {
         await this.rescanVault();
         this.refreshCalendarView();
@@ -225,7 +228,7 @@ export default class RealCalendarPlugin extends Plugin {
     }, 3000);
   }
 
-  private async checkForStaleCache(): Promise<boolean> {
+  private checkForStaleCache(): boolean {
     const allFiles = this.app.vault.getMarkdownFiles().filter(f => this.isInEventFolder(f.path));
     const currentPaths = new Set(allFiles.map(f => f.path));
     const cachedPaths = new Set(this.events.map(e => e.file.path));
@@ -263,7 +266,7 @@ export default class RealCalendarPlugin extends Plugin {
       }
       await this.saveData({ ...this.settings, events: this.events });
       this.refreshCalendarView();
-    } catch (err) {
+    } catch {
       // Failed to update event, will be picked up on next rescan
     }
   }
@@ -327,7 +330,7 @@ export default class RealCalendarPlugin extends Plugin {
     leaves.forEach(leaf => {
       try {
         (leaf.view as RealCalendarView).renderCalendar();
-      } catch (err) {
+      } catch {
         // Failed to refresh view
       }
     });
@@ -336,7 +339,7 @@ export default class RealCalendarPlugin extends Plugin {
     this.embedRenderers.forEach(renderer => {
       try {
         renderer.refresh();
-      } catch (err) {
+      } catch {
         // Failed to refresh embed
       }
     });
