@@ -16,7 +16,6 @@ A powerful calendar plugin for Obsidian that displays events from markdown files
 - ⚙️ **Customizable**: Configure event folders, week start day, and frontmatter fields
 - 🔄 **Real-time Updates**: Automatically syncs with file changes
 - 📱 **Mobile Compatible**: Works on desktop and mobile Obsidian apps
-- ⌨️ **Keyboard Navigation**: Navigate with arrow keys and keyboard shortcuts
 
 ![Week View](Pictures/real-calendar-pictures/week-view.png)
 
@@ -72,9 +71,6 @@ endTime: "15:30"
 done: false
 ---
 
-# Your Event Title
-
-Your event description goes here.
 ```
 
 #### Required Fields
@@ -134,8 +130,6 @@ See all events for the current month in a traditional calendar grid layout.
 
 - Click events to open the corresponding file
 - Right-click events to move to trash
-- Navigate with arrow buttons or arrow keys
-- Press `T` to jump to today
 
 ### Week View
 
@@ -153,12 +147,6 @@ Focus on a single day with a detailed event list.
 - Displays event times and status
 - Clean, focused interface
 
-## Keyboard Shortcuts
-
-- **Arrow Left/Right**: Navigate to previous/next period
-- **T**: Jump to today
-- **Enter/Space**: Open event file (when focused on an event)
-
 ## Event Status Indicators
 
 Events are color-coded for quick visual reference:
@@ -168,19 +156,6 @@ Events are color-coded for quick visual reference:
 - ✅ **Completed**: Events marked as done
 
 ## Workflow Tips
-
-### Organizing Events
-
-1. **Use folders**: Set an event folder in settings to organize your events
-2. **Naming convention**: Use descriptive names for easy identification
-3. **Completion tracking**: Mark events as done by setting `done: true` in frontmatter
-
-### Daily Workflow
-
-1. Open the calendar view in the morning
-2. Review the day view for today's events
-3. Check week view for upcoming events
-4. Mark events as complete when finished
 
 ### Embedding Workflows
 
@@ -231,25 +206,11 @@ npm run dev
 
 This will watch for changes and rebuild automatically.
 
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
 ## Support
 
 - 🐛 **Bug Reports**: [GitHub Issues](https://github.com/wiktor-wytch/real-calendar/issues)
 - 💡 **Feature Requests**: [GitHub Discussions](https://github.com/wiktor-wytch/real-calendar/discussions)
 - 📧 **Contact**: [GitHub Profile](https://github.com/wiktor-wytch)
-
-## Roadmap
-
-<!-- Roadmap content will be added here -->
 
 ## License
 
