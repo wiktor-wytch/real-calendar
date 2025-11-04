@@ -9,6 +9,9 @@ main.js
 # User data
 data.json
 
+# Development notes
+ROADMAP_IDEAS.md
+
 # IDEs
 .vscode/
 .idea/

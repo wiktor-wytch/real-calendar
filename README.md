@@ -5,8 +5,7 @@
 
 A powerful calendar plugin for Obsidian that displays events from markdown files with frontmatter. View your events in month, week, or day views, create events easily, and **embed calendars anywhere in your notes**.
 
-![Calendar Preview](https://via.placeholder.com/800x400/4a90e2/ffffff?text=Calendar+Month+View)
-*Add a screenshot of the month view here*
+![Calendar Preview](Pictures/real-calendar-pictures/month-view.png)
 
 ## Features
 
@@ -19,11 +18,9 @@ A powerful calendar plugin for Obsidian that displays events from markdown files
 - 📱 **Mobile Compatible**: Works on desktop and mobile Obsidian apps
 - ⌨️ **Keyboard Navigation**: Navigate with arrow keys and keyboard shortcuts
 
-![Week View](https://via.placeholder.com/800x400/50c878/ffffff?text=Calendar+Week+View)
-*Add a screenshot of the week view here*
+![Week View](Pictures/real-calendar-pictures/week-view.png)
 
-![Day View](https://via.placeholder.com/800x400/ff6b6b/ffffff?text=Calendar+Day+View)
-*Add a screenshot of the day view here*
+![Day View](Pictures/real-calendar-pictures/day-view.png)
 
 ## Installation
 
@@ -53,8 +50,7 @@ A powerful calendar plugin for Obsidian that displays events from markdown files
    - End time (optional, HH:MM format)
 4. Click **Create Event**
 
-![Create Event Modal](https://via.placeholder.com/600x400/9b59b6/ffffff?text=Create+Event+Modal)
-*Add a screenshot of the create event modal here*
+![Create Event Modal](Pictures/real-calendar-pictures/create-event-modal.png)
 
 ### Opening the Calendar View
 
@@ -110,8 +106,7 @@ folder: projects/events
 - **`showCompleted`** - Show completed events: `true` or `false` (default: uses plugin setting)
 - **`folder`** - Filter events to a specific folder path (default: all folders)
 
-![Embedded Calendar](https://via.placeholder.com/800x300/34495e/ffffff?text=Embedded+Calendar+Example)
-*Add a screenshot showing an embedded calendar in a note here*
+![Embedded Calendar](Pictures/real-calendar-pictures/embedded-calendar.png)
 
 ## Settings
 
@@ -129,8 +124,7 @@ Access settings via **Settings → Real Calendar**.
 - **Include 'done' field**: Toggle whether to include the `done` field in new events
 - **Field order**: Drag and drop to reorder frontmatter fields
 
-![Settings Panel](https://via.placeholder.com/600x500/e74c3c/ffffff?text=Settings+Panel)
-*Add a screenshot of the settings panel here*
+![Settings Panel](Pictures/real-calendar-pictures/settings-panel.png)
 
 ## View Modes
 
@@ -173,9 +167,6 @@ Events are color-coded for quick visual reference:
 - 🔴 **Overdue**: Events that have passed (not completed)
 - ✅ **Completed**: Events marked as done
 
-![Event Status Colors](https://via.placeholder.com/400x200/27ae60/ffffff?text=Event+Status+Colors)
-*Add a screenshot showing different event status colors here*
-
 ## Workflow Tips
 
 ### Organizing Events
@@ -196,9 +187,6 @@ Events are color-coded for quick visual reference:
 - Embed a calendar in your daily note template
 - Create project-specific calendars using folder filtering
 - Use different views for different purposes (month for overview, day for focus)
-
-![Workflow Example](https://via.placeholder.com/800x400/3498db/ffffff?text=Workflow+Example)
-*Add a GIF showing a typical workflow here*
 
 ## Troubleshooting
 
