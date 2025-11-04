@@ -253,16 +253,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is licensed under the ISC License.
-
-## Acknowledgments
-
-- Built for the Obsidian community
-- Inspired by the need for a simple, file-based calendar system
+This project is licensed under the MIT License.
 
 ---
-
-**Made with ❤️ for Obsidian users**
 
 *Star this repo if you find it useful!*
 
