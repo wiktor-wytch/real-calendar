@@ -1,7 +1,6 @@
 # Real Calendar
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![Obsidian](https://img.shields.io/badge/Obsidian-1.0.0+-purple.svg)
 
 A powerful calendar plugin for Obsidian that displays events from markdown files with frontmatter. View your events in month, week, or day views, create events easily, and **embed calendars anywhere in your notes**.
 
