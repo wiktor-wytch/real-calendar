@@ -141,20 +141,22 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
   }
 
   private addDeleteContextMenu(el: HTMLElement, file: TFile) {
-    el.oncontextmenu = async (evt: MouseEvent) => {
+    el.oncontextmenu = (evt: MouseEvent) => {
       evt.preventDefault();
 
       const menu = new Menu();
       menu.addItem(item => item
         .setTitle("Move to trash")
         .setIcon("trash")
-        .onClick(async () => {
-          try {
-            await this.plugin.app.vault.trash(file, true);
-            new Notice(`Moved "${file.basename}" to trash`);
-          } catch {
-            new Notice("Failed to move file to trash.");
-          }
+        .onClick(() => {
+          void (async () => {
+            try {
+              await this.plugin.app.vault.trash(file, true);
+              new Notice(`Moved "${file.basename}" to trash`);
+            } catch {
+              new Notice("Failed to move file to trash.");
+            }
+          })();
         })
       );
       menu.showAtMouseEvent(evt);
@@ -188,7 +190,9 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
         const eventText = e.startTime ? `${e.startTime} ${e.title}` : e.title;
         const eventEl = dayEl.createEl("div", { cls: "calendar-event", text: eventText });
         eventEl.setAttribute("title", e.title);
-        eventEl.onclick = () => this.plugin.app.workspace.openLinkText(e.file.path, "", false);
+        eventEl.onclick = () => {
+          void this.plugin.app.workspace.openLinkText(e.file.path, "", false);
+        };
         if (e.done) eventEl.addClass("event-done");
         else if (e.date < todayStr) eventEl.addClass("event-overdue");
         else eventEl.addClass("event-upcoming");
@@ -224,7 +228,9 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
           const eventText = e.startTime ? `${e.startTime} ${e.title}` : e.title;
           const eventEl = eventsContainer.createEl("div", { cls: "calendar-event", text: eventText });
           eventEl.setAttribute("title", e.title);
-          eventEl.onclick = () => this.plugin.app.workspace.openLinkText(e.file.path, "", false);
+          eventEl.onclick = () => {
+            void this.plugin.app.workspace.openLinkText(e.file.path, "", false);
+          };
           if (e.done) eventEl.addClass("event-done");
           else if (e.date < todayStr) eventEl.addClass("event-overdue");
           else eventEl.addClass("event-upcoming");
@@ -249,7 +255,9 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
     } else {
       dayEvents.forEach(e => {
         const eventItem = eventList.createEl("div", { cls: "day-event-item" });
-        eventItem.onclick = () => this.plugin.app.workspace.openLinkText(e.file.path, "", false);
+        eventItem.onclick = () => {
+          void this.plugin.app.workspace.openLinkText(e.file.path, "", false);
+        };
 
         eventItem.createEl("div", { cls: "day-event-title", text: e.title });
 
@@ -262,12 +270,12 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
 
         const statusEl = eventItem.createEl("div", { cls: "day-event-status" });
         if (e.done) {
-          // eslint-disable-next-line obsidianmd/ui/sentence-case
-          statusEl.setText("✓ Completed");
+          statusEl.createSpan({ text: "✓" });
+          statusEl.appendText(" Completed");
           statusEl.addClass("event-done");
         } else if (e.date < todayStr) {
-          // eslint-disable-next-line obsidianmd/ui/sentence-case
-          statusEl.setText("⚠ Overdue");
+          statusEl.createSpan({ text: "⚠" });
+          statusEl.appendText(" Overdue");
           statusEl.addClass("event-overdue");
         }
 

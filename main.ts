@@ -74,13 +74,13 @@ export default class RealCalendarPlugin extends Plugin {
 
     this.registerEvent(this.app.vault.on("modify", (file) => {
       if (this.isInitialized && file instanceof TFile && file.extension === "md") {
-        this.updateSingleFile(file);
+        void this.updateSingleFile(file);
       }
     }));
 
     this.registerEvent(this.app.vault.on("create", (file) => {
       if (this.isInitialized && file instanceof TFile && file.extension === "md") {
-        this.updateSingleFile(file);
+        void this.updateSingleFile(file);
       }
     }));
 
@@ -119,7 +119,7 @@ export default class RealCalendarPlugin extends Plugin {
     });
 
     this.app.workspace.onLayoutReady(() => {
-      this.backgroundInit();
+      void this.backgroundInit();
     });
   }
 
@@ -183,9 +183,10 @@ export default class RealCalendarPlugin extends Plugin {
 
   private debouncedRefresh() {
     if (this.refreshTimeout) clearTimeout(this.refreshTimeout);
-    this.refreshTimeout = window.setTimeout(async () => {
-      await this.rescanVault();
-      this.refreshCalendarView();
+    this.refreshTimeout = window.setTimeout(() => {
+      void this.rescanVault().then(() => {
+        this.refreshCalendarView();
+      });
     }, 10000) as unknown as number;
   }
 
@@ -219,12 +220,14 @@ export default class RealCalendarPlugin extends Plugin {
   }
 
   private validateCacheInBackground() {
-    void window.setTimeout(async () => {
-      const hasChanges = this.checkForStaleCache();
-      if (hasChanges) {
-        await this.rescanVault();
-        this.refreshCalendarView();
-      }
+    window.setTimeout(() => {
+      void (async () => {
+        const hasChanges = this.checkForStaleCache();
+        if (hasChanges) {
+          await this.rescanVault();
+          this.refreshCalendarView();
+        }
+      })();
     }, 3000);
   }
 
@@ -276,7 +279,7 @@ export default class RealCalendarPlugin extends Plugin {
     const before = this.events.length;
     this.events = this.events.filter(e => e.file.path !== file.path);
     if (this.events.length !== before) {
-      this.saveData({ ...this.settings, events: this.events });
+      void this.saveData({ ...this.settings, events: this.events });
       this.refreshCalendarView();
     }
   }

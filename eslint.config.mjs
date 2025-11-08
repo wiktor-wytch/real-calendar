@@ -8,6 +8,13 @@ for (const ruleName of Object.keys(obsidianmd.rules || {})) {
 }
 
 export default [
+  {
+    ignores: [
+      "dist/**",
+      "real-calendar-source.zip",
+      "main.js"
+    ]
+  },
   ...tseslint.configs.recommended,
   {
     files: ["**/*.ts"],

@@ -4,9 +4,9 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c --watch",
-    "build:dev": "rollup -c --environment NODE_ENV:development"
+    "build": "rollup -c rollup.config.mjs",
+    "dev": "rollup -c rollup.config.mjs --watch",
+    "build:dev": "rollup -c rollup.config.mjs --environment NODE_ENV:development"
   },
   "keywords": [],
   "author": "",

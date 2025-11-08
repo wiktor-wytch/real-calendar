@@ -41,8 +41,7 @@ export class CreateEventModal extends Modal {
       .setDesc("Date of the event")
       .addText(text => {
         text
-          // eslint-disable-next-line obsidianmd/ui/sentence-case
-          .setPlaceholder("yyyy-mm-dd")
+          .setPlaceholder("Date in yyyy-mm-dd format")
           .setValue(this.eventDate)
           .onChange(value => {
             this.eventDate = value;
@@ -55,8 +54,7 @@ export class CreateEventModal extends Modal {
       .setDesc("Leave empty for all-day event")
       .addText(text => {
         text
-          // eslint-disable-next-line obsidianmd/ui/sentence-case
-          .setPlaceholder("hh:mm")
+          .setPlaceholder("Time in hh:mm format")
           .setValue(this.startTime)
           .onChange(value => {
             this.startTime = value;
@@ -69,8 +67,7 @@ export class CreateEventModal extends Modal {
       .setDesc("Leave empty for all-day event")
       .addText(text => {
         text
-          // eslint-disable-next-line obsidianmd/ui/sentence-case
-          .setPlaceholder("hh:mm")
+          .setPlaceholder("Time in hh:mm format")
           .setValue(this.endTime)
           .onChange(value => {
             this.endTime = value;
@@ -87,14 +84,14 @@ export class CreateEventModal extends Modal {
       text: "Create event",
       cls: "mod-cta"
     });
-    createButton.onclick = async () => {
-      await this.createEvent();
+    createButton.onclick = () => {
+      void this.createEvent();
     };
 
     contentEl.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
-        this.createEvent();
+        void this.createEvent();
       }
     });
   }
