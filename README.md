@@ -50,6 +50,9 @@ A powerful calendar plugin for Obsidian that displays events from markdown files
 
 ![Create Event Modal](Pictures/real-calendar-pictures/create-event-modal.png)
 
+*Create event modal in dark theme showing date and optional time pickers.*  
+![Create Event Modal (Dark)](Pictures/real-calendar-pictures/create-event-modal-dark.png)
+
 ### Opening the Calendar View
 
 - Click the calendar icon in the ribbon
