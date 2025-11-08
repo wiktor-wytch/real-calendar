@@ -69,7 +69,7 @@ export default class RealCalendarPlugin extends Plugin {
     this.addRibbonIcon("calendar-with-checkmark", "Open calendar", async () => {
       await this.ensureInitialized();
       this.currentDate = new Date(this.currentYear, this.currentMonth, new Date().getDate());
-      this.openCalendarView();
+      await this.openCalendarView();
     });
 
     this.registerEvent(this.app.vault.on("modify", (file) => {
