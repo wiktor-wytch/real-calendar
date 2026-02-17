@@ -1,18 +1,35 @@
-# Obsidian plugin
+# Node / package
 node_modules/
+package-lock.json
+
+# Build outputs
+main.js
+main.js.map
 dist/
+real-calendar-source.zip
+*.tgz
+
+# Caches
+/.parcel-cache
+.cache/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 *.log
 
-# Build artifacts
-main.js
+# Test / coverage
+coverage/
 
-# User data
-data.json
-
-# Development notes
-ROADMAP_IDEAS.md
-
-# IDEs
+# Editor / IDE
 .vscode/
 .idea/
+
+# OS
+.DS_Store
+
+# Plugin-specific
+data.json
+ROADMAP_IDEAS.md
 
