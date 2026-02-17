@@ -1,7 +1,7 @@
 {
   "id": "real-calendar",
   "name": "Real Calendar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minAppVersion": "1.0.0",
   "description": "File-based calendar with embedded calendar support.",
   "author": "wiktor-wytch",
