@@ -1,4 +1,4 @@
-import { App, Setting, Modal, Notice, normalizePath } from "obsidian";
+import { App, Setting, Modal, Notice, normalizePath, stringifyYaml } from "obsidian";
 import RealCalendarPlugin from "../main";
 import { formatDateString, isValidDateString, isValidTimeString, isValidTimeRange } from "./utils/dateUtils";
 
@@ -75,7 +75,7 @@ export class CreateEventModal extends Modal {
         text.inputEl.type = "time";
       });
 
-    const buttonContainer = contentEl.createDiv({ cls: "modal-button-container" });
+    const buttonContainer = contentEl.createDiv({ cls: "real-calendar-modal-button-container" });
 
     const cancelButton = buttonContainer.createEl("button", { text: "Cancel" });
     cancelButton.onclick = () => this.close();
@@ -126,34 +126,21 @@ export class CreateEventModal extends Modal {
     }
 
     try {
-      let frontmatter = "---\n";
+      // Build the frontmatter object in fieldOrder, respecting enabled toggles
+      const fmFields: Record<string, unknown> = {};
       for (const field of this.plugin.settings.fieldOrder) {
         if (!this.plugin.settings.frontmatterFields[field as keyof typeof this.plugin.settings.frontmatterFields]) {
           continue;
         }
         switch (field) {
-          case "tags":
-            frontmatter += "tags: event\n";
-            break;
-          case "date":
-            frontmatter += `date: ${this.eventDate}\n`;
-            break;
-          case "startTime":
-            if (this.startTime) {
-              frontmatter += `startTime: "${this.startTime}"\n`;
-            }
-            break;
-          case "endTime":
-            if (this.endTime) {
-              frontmatter += `endTime: "${this.endTime}"\n`;
-            }
-            break;
-          case "done":
-            frontmatter += "done: false\n";
-            break;
+          case "tags":   fmFields["tags"] = ["event"]; break;
+          case "date":   fmFields["date"] = this.eventDate; break;
+          case "startTime": if (this.startTime) fmFields["startTime"] = this.startTime; break;
+          case "endTime":   if (this.endTime)   fmFields["endTime"]   = this.endTime;   break;
+          case "done":   fmFields["done"] = false; break;
         }
       }
-      frontmatter += "---\n";
+      const frontmatter = `---\n${stringifyYaml(fmFields)}---\n`;
 
       const folderPath = normalizePath(this.plugin.settings.eventFolder || "");
       const fileName = this.eventName.trim().replace(/[\\/:*?"<>|]/g, "-");

@@ -1,4 +1,4 @@
-import { PluginSettingTab, App, Setting, normalizePath } from "obsidian";
+import { PluginSettingTab, App, Setting, normalizePath, stringifyYaml } from "obsidian";
 import RealCalendarPlugin from "../main";
 
 // -------------------- Settings Tab --------------------
@@ -90,31 +90,20 @@ export class RealCalendarSettingTab extends PluginSettingTab {
     containerEl.createEl("p", { text: "Create event files with the following frontmatter:" });
 
     const codeBlock = containerEl.createEl("pre", { cls: "real-calendar-example" });
-    let exampleFrontmatter = "---\n";
+    const exampleFields: Record<string, unknown> = {};
     for (const field of this.plugin.settings.fieldOrder) {
       if (!this.plugin.settings.frontmatterFields[field as keyof typeof this.plugin.settings.frontmatterFields]) {
         continue;
       }
       switch (field) {
-        case "tags":
-          exampleFrontmatter += "tags: event\n";
-          break;
-        case "date":
-          exampleFrontmatter += "date: 2025-10-24\n";
-          break;
-        case "startTime":
-          exampleFrontmatter += 'startTime: "14:00"\n';
-          break;
-        case "endTime":
-          exampleFrontmatter += 'endTime: "15:30"\n';
-          break;
-        case "done":
-          exampleFrontmatter += "done: false\n";
-          break;
+        case "tags":      exampleFields["tags"]      = ["event"]; break;
+        case "date":      exampleFields["date"]      = "2025-10-24"; break;
+        case "startTime": exampleFields["startTime"] = "14:00"; break;
+        case "endTime":   exampleFields["endTime"]   = "15:30"; break;
+        case "done":      exampleFields["done"]      = false; break;
       }
     }
-    exampleFrontmatter += "---";
-    codeBlock.textContent = exampleFrontmatter;
+    codeBlock.textContent = `---\n${stringifyYaml(exampleFields)}---`;
 
     containerEl.createEl("p", { text: "You can also run the real calendar command to create a new event." });
 
@@ -168,12 +157,12 @@ export class RealCalendarSettingTab extends PluginSettingTab {
 
     this.plugin.settings.fieldOrder.forEach((field, index) => {
       const fieldEl = container.createDiv({ cls: "real-calendar-field-item" });
-      fieldEl.createSpan({ text: "⋮⋮", cls: "drag-handle" });
-      fieldEl.createSpan({ text: fieldNames[field] || field, cls: "field-name" });
-      const buttonContainer = fieldEl.createDiv({ cls: "field-buttons" });
+      fieldEl.createSpan({ text: "⋮⋮", cls: "real-calendar-drag-handle" });
+      fieldEl.createSpan({ text: fieldNames[field] || field, cls: "real-calendar-field-name" });
+      const buttonContainer = fieldEl.createDiv({ cls: "real-calendar-field-buttons" });
 
       if (index > 0) {
-        const upBtn = buttonContainer.createEl("button", { text: "↑", cls: "field-move-button" });
+        const upBtn = buttonContainer.createEl("button", { text: "↑", cls: "real-calendar-field-move-button" });
         upBtn.onclick = () => {
           const temp = this.plugin.settings.fieldOrder[index];
           this.plugin.settings.fieldOrder[index] = this.plugin.settings.fieldOrder[index - 1];
@@ -185,7 +174,7 @@ export class RealCalendarSettingTab extends PluginSettingTab {
       }
 
       if (index < this.plugin.settings.fieldOrder.length - 1) {
-        const downBtn = buttonContainer.createEl("button", { text: "↓", cls: "field-move-button" });
+        const downBtn = buttonContainer.createEl("button", { text: "↓", cls: "real-calendar-field-move-button" });
         downBtn.onclick = () => {
           const temp = this.plugin.settings.fieldOrder[index];
           this.plugin.settings.fieldOrder[index] = this.plugin.settings.fieldOrder[index + 1];
@@ -200,10 +189,10 @@ export class RealCalendarSettingTab extends PluginSettingTab {
       fieldEl.ondragstart = (e) => {
         e.dataTransfer!.effectAllowed = "move";
         e.dataTransfer!.setData("text/plain", index.toString());
-        fieldEl.addClass("dragging");
+        fieldEl.addClass("real-calendar-dragging");
       };
       fieldEl.ondragend = () => {
-        fieldEl.removeClass("dragging");
+        fieldEl.removeClass("real-calendar-dragging");
       };
       fieldEl.ondragover = (e) => {
         e.preventDefault();

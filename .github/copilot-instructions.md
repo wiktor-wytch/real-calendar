@@ -1,45 +1,63 @@
 # Copilot instructions for Real Calendar
 
-## Project purpose and runtime
-- This is an Obsidian plugin (CommonJS bundle) that renders file-based calendar events from Markdown frontmatter.
-- Entry point is main.ts (`RealCalendarPlugin`), and build output is main.js loaded by Obsidian.
-- Core event schema is `EventItem` (`date`, `title`, `file`, `done`, optional `startTime`/`endTime`).
+Purpose
+- Obsidian plugin (CommonJS) that renders calendar events sourced from Markdown frontmatter.
 
-## Architecture and data flow
-- `RealCalendarPlugin` in main.ts owns all shared state: `settings`, in-memory `events`, current view date, and active embed renderers.
-- Full calendar tab UI is in src/RealCalendarView.ts (`ItemView`), while embedded calendars are in src/RealCalendarEmbedRenderer.ts (`MarkdownRenderChild`).
-- Both tab and embed renderers reuse plugin state and helper methods (`getWeekStart()`, month/day labels) and are refreshed via `refreshCalendarView()`.
-- Event ingestion pipeline:
-  1. Vault files scanned (`rescanVault()` in chunks of 20).
-  2. Frontmatter parsed in `extractEventFromFile()` via `parseYaml`.
-  3. Only files with `tags` containing `event` and valid `date` are kept.
-- Incremental sync is preferred over rescans: `updateSingleFile()` on create/modify, `removeFileEvent()` on delete, and debounced full refresh on rename.
+Quick entrypoints
+- Plugin owner/state: [main.ts](main.ts)
+- Full-view UI: [src/RealCalendarView.ts](src/RealCalendarView.ts)
+- Embed renderer: [src/RealCalendarEmbedRenderer.ts](src/RealCalendarEmbedRenderer.ts)
+- Event creation UI: [src/CreateEventModal.ts](src/CreateEventModal.ts)
+- Date helpers: [src/utils/dateUtils.ts](src/utils/dateUtils.ts)
+- Styles: [styles.css](styles.css)
 
-## Critical conventions in this codebase
-- Dates must be strict `YYYY-MM-DD`; validate with helpers in src/utils/dateUtils.ts (`parseDateString()`, `isValidDateString()`).
-- Time strings are strict `HH:MM` and compared lexicographically after validation (`isValidTimeString()`, `isValidTimeRange()`).
-- New event files are created only through frontmatter field order in settings (`fieldOrder` + `frontmatterFields`) from src/CreateEventModal.ts.
-- Keep folder paths normalized with `normalizePath` when reading/writing `eventFolder` and creating files.
-- Preserve the shared CSS class contract in styles.css (e.g., `calendar-event`, `event-done`, `week-view`) because both main view and embed renderer depend on it.
+Essential data model
+- `EventItem`: minimal fields `date`, `title`, `file`, `done`; optional `startTime`/`endTime`. Look in `main.ts` where events are stored in-memory.
 
-## Settings, persistence, and cache behavior
-- Plugin settings are merged with defaults in `loadSettings()`; `fieldOrder` fallback is mandatory.
-- Event cache is persisted alongside settings using `saveData({ ...settings, events })`; keep this shape compatible when changing persistence.
-- Startup is intentionally non-blocking: `backgroundInit()` loads events after layout; `ensureInitialized()` gates user actions.
-- Cache validation runs asynchronously (`validateCacheInBackground()`), then forces a rescan only when file-path sets differ.
+Key conventions (must follow exactly)
+- Dates: strict `YYYY-MM-DD` — use `parseDateString()` / `isValidDateString()` in [src/utils/dateUtils.ts](src/utils/dateUtils.ts).
+- Times: strict `HH:MM` — validated with `isValidTimeString()`; ranges compared lexicographically after validation.
+- Frontmatter selection: files must include a `tags` entry containing `event` and a valid `date` to be ingested.
+- Frontmatter ordering: new event files are created using `fieldOrder` + `frontmatterFields` from [src/CreateEventModal.ts](src/CreateEventModal.ts). Do not bypass that logic when adding files programmatically.
+- Paths: normalize with `normalizePath()` before reading/writing the configured `eventFolder`.
+- CSS contract: styles were namespaced with the `real-calendar-` prefix to avoid collisions (examples: `real-calendar-calendar-event`, `real-calendar-event-done`, `real-calendar-week-view`). If you change class names, update both [styles.css](styles.css) and all usages in `src/*.ts`.
 
-## Developer workflows
-- Install deps: `npm install`
-- Production build: `npm run build`
-- Watch mode for plugin development: `npm run dev`
-- Non-minified debug-ish build: `npm run build:dev` (sets `NODE_ENV=development`, disables terser in rollup config)
-- Linting uses ESLint flat config with all `eslint-plugin-obsidianmd` rules enabled; run manually with `npx eslint .` (no npm script defined).
+Data flow and integration points
+- Initial scan: `rescanVault()` (batched, chunks of 20). Parsing happens in `extractEventFromFile()` using `parseYaml`.
+- Incremental updates: use `updateSingleFile()` on create/modify and `removeFileEvent()` on delete; renames trigger a debounced full refresh.
+- Cache & persistence: settings and event cache are saved together via `saveData({ ...settings, events })` — preserve this shape.
+- Startup: `backgroundInit()` loads events after layout; guard UI actions with `ensureInitialized()`.
 
-## Integration points to update together
-- If you add/change frontmatter fields, update all of:
-  - defaults and settings shape in main.ts
-  - field toggles/order UI in src/RealCalendarSettingTab.ts
-  - file creation logic in src/CreateEventModal.ts
-  - parsing logic in `extractEventFromFile()` in main.ts
-- If you change event rendering/status classes, update both src/RealCalendarView.ts and src/RealCalendarEmbedRenderer.ts plus styles.css.
-- If you add embed options, extend `parseEmbedOptions()` and `EmbedOptions` in main.ts and consume in src/RealCalendarEmbedRenderer.ts.
+Developer workflows (commands)
+- Install: `npm install`
+- Build (prod): `npm run build`
+- Dev/watch: `npm run dev`
+- Debug build (no terser): `npm run build:dev`
+- Lint: `npx eslint .`
+
+When you change frontmatter fields or rendering
+- Update these in lockstep:
+  - defaults and settings shape in [main.ts](main.ts)
+  - settings UI in [src/RealCalendarSettingTab.ts](src/RealCalendarSettingTab.ts)
+  - file creation in [src/CreateEventModal.ts](src/CreateEventModal.ts)
+  - parsing in `extractEventFromFile()` (main.ts)
+  - rendering classes in [src/RealCalendarView.ts](src/RealCalendarView.ts) and [src/RealCalendarEmbedRenderer.ts](src/RealCalendarEmbedRenderer.ts)
+
+Example event frontmatter (must include `tags: [event]` and `date`):
+```yaml
+---
+title: Team meeting
+date: 2026-02-25
+tags: [event]
+startTime: "09:00"
+endTime: "10:00"
+done: false
+---
+```
+
+Notes for agents
+- Prefer using the existing helper methods over ad-hoc parsing (see `dateUtils` and `extractEventFromFile`).
+- Small, focused changes are preferable; keep persistence shape and CSS class names stable.
+- Run `npm run dev` while iterating to speed up rebuilds; use `npm run build` for production bundles.
+
+If anything here is unclear or you need more examples (e.g., more frontmatter variants), tell me what to expand.

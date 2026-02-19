@@ -28,8 +28,8 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
     const calendarEl = this.container.createEl("div");
     calendarEl.addClass("real-calendar");
 
-    const controls = calendarEl.createEl("div", { cls: "calendar-controls" });
-    const header = controls.createEl("div", { cls: "calendar-header" });
+    const controls = calendarEl.createEl("div", { cls: "real-calendar-calendar-controls" });
+    const header = controls.createEl("div", { cls: "real-calendar-calendar-header" });
 
     const prev = header.createEl("button", { text: "◀" });
     const title = header.createEl("span");
@@ -44,7 +44,7 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
       this.render();
     };
 
-    const viewToggle = controls.createEl("div", { cls: "view-toggle" });
+    const viewToggle = controls.createEl("div", { cls: "real-calendar-view-toggle" });
     const monthBtn = viewToggle.createEl("button", { text: "Month" });
     const weekBtn = viewToggle.createEl("button", { text: "Week" });
     const dayBtn = viewToggle.createEl("button", { text: "Day" });
@@ -151,7 +151,7 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
         .onClick(() => {
           void (async () => {
             try {
-              await this.plugin.app.vault.trash(file, true);
+              await this.plugin.app.fileManager.trashFile(file);
               new Notice(`Moved "${file.basename}" to trash`);
             } catch {
               new Notice("Failed to move file to trash.");
@@ -167,42 +167,42 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
     const weekdays = this.plugin.settings.weekStartDay === 1
       ? ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
       : ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
-    const weekRow = container.createEl("div", { cls: "calendar-weekdays" });
-    weekdays.forEach(day => weekRow.createEl("div", { cls: "calendar-weekday", text: day }));
+    const weekRow = container.createEl("div", { cls: "real-calendar-calendar-weekdays" });
+    weekdays.forEach(day => weekRow.createEl("div", { cls: "real-calendar-calendar-weekday", text: day }));
 
-    const grid = container.createEl("div", { cls: "calendar-grid" });
+    const grid = container.createEl("div", { cls: "real-calendar-calendar-grid" });
     const firstDay = new Date(this.currentYear, this.currentMonth, 1).getDay();
     const daysInMonth = new Date(this.currentYear, this.currentMonth + 1, 0).getDate();
     const today = new Date();
     const todayStr = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
 
     const startOffset = this.plugin.settings.weekStartDay === 1 ? (firstDay === 0 ? 6 : firstDay - 1) : firstDay;
-    for (let i = 0; i < startOffset; i++) grid.createEl("div", { cls: "calendar-day empty" });
+    for (let i = 0; i < startOffset; i++) grid.createEl("div", { cls: "real-calendar-calendar-day real-calendar-empty" });
 
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = `${this.currentYear}-${(this.currentMonth + 1).toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
-      const dayEl = grid.createEl("div", { cls: "calendar-day" });
-      if (dateStr === todayStr) dayEl.addClass("today");
-      dayEl.createEl("div", { cls: "day-label", text: day.toString() });
+      const dayEl = grid.createEl("div", { cls: "real-calendar-calendar-day" });
+      if (dateStr === todayStr) dayEl.addClass("real-calendar-today");
+      dayEl.createEl("div", { cls: "real-calendar-calendar-day-number", text: day.toString() });
 
       const dayEvents = this.getFilteredEvents(dateStr);
       dayEvents.forEach(e => {
         const eventText = e.startTime ? `${e.startTime} ${e.title}` : e.title;
-        const eventEl = dayEl.createEl("div", { cls: "calendar-event", text: eventText });
+        const eventEl = dayEl.createEl("div", { cls: "real-calendar-calendar-event", text: eventText });
         eventEl.setAttribute("title", e.title);
         eventEl.onclick = () => {
           void this.plugin.app.workspace.openLinkText(e.file.path, "", false);
         };
-        if (e.done) eventEl.addClass("event-done");
-        else if (e.date < todayStr) eventEl.addClass("event-overdue");
-        else eventEl.addClass("event-upcoming");
+        if (e.done) eventEl.addClass("real-calendar-event-done");
+        else if (e.date < todayStr) eventEl.addClass("real-calendar-event-overdue");
+        else eventEl.addClass("real-calendar-event-upcoming");
         this.addDeleteContextMenu(eventEl, e.file);
       });
     }
   }
 
   renderWeekView(container: HTMLElement) {
-    const weekView = container.createEl("div", { cls: "week-view" });
+    const weekView = container.createEl("div", { cls: "real-calendar-week-view" });
     const weekStart = this.plugin.getWeekStart(this.currentDate);
     const today = new Date();
     const todayStr = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
@@ -212,28 +212,28 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
       date.setDate(date.getDate() + i);
       const dateStr = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
 
-      const dayEl = weekView.createEl("div", { cls: "week-day" });
-      const header = dayEl.createEl("div", { cls: "week-day-header" });
+      const dayEl = weekView.createEl("div", { cls: "real-calendar-week-day" });
+      const header = dayEl.createEl("div", { cls: "real-calendar-week-day-header" });
       header.setText(`${this.plugin.getDayName(date.getDay())}, ${this.plugin.getMonthName(date.getMonth())} ${date.getDate()}`);
-      if (dateStr === todayStr) dayEl.addClass('today');
+      if (dateStr === todayStr) dayEl.addClass('real-calendar-today');
 
-      const eventsContainer = dayEl.createEl("div", { cls: "week-day-events" });
+      const eventsContainer = dayEl.createEl("div", { cls: "real-calendar-week-day-events" });
 
       const dayEvents = this.getFilteredEvents(dateStr);
 
       if (dayEvents.length === 0) {
-        eventsContainer.createEl("div", { text: "No events", cls: "calendar-event empty-event" });
+        eventsContainer.createEl("div", { text: "No events", cls: "real-calendar-calendar-event real-calendar-empty-event" });
       } else {
         dayEvents.forEach(e => {
           const eventText = e.startTime ? `${e.startTime} ${e.title}` : e.title;
-          const eventEl = eventsContainer.createEl("div", { cls: "calendar-event", text: eventText });
+          const eventEl = eventsContainer.createEl("div", { cls: "real-calendar-calendar-event", text: eventText });
           eventEl.setAttribute("title", e.title);
           eventEl.onclick = () => {
             void this.plugin.app.workspace.openLinkText(e.file.path, "", false);
           };
-          if (e.done) eventEl.addClass("event-done");
-          else if (e.date < todayStr) eventEl.addClass("event-overdue");
-          else eventEl.addClass("event-upcoming");
+          if (e.done) eventEl.addClass("real-calendar-event-done");
+          else if (e.date < todayStr) eventEl.addClass("real-calendar-event-overdue");
+          else eventEl.addClass("real-calendar-event-upcoming");
           this.addDeleteContextMenu(eventEl, e.file);
         });
       }
@@ -241,42 +241,42 @@ export class RealCalendarEmbedRenderer extends MarkdownRenderChild {
   }
 
   renderDayView(container: HTMLElement) {
-    const dayView = container.createEl("div", { cls: "day-view" });
+    const dayView = container.createEl("div", { cls: "real-calendar-day-view" });
     const dateStr = `${this.currentDate.getFullYear()}-${(this.currentDate.getMonth() + 1).toString().padStart(2, "0")}-${this.currentDate.getDate().toString().padStart(2, "0")}`;
     const today = new Date();
     const todayStr = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, "0")}-${today.getDate().toString().padStart(2, "0")}`;
 
-    const eventList = dayView.createEl("div", { cls: "day-event-list" });
+    const eventList = dayView.createEl("div", { cls: "real-calendar-day-event-list" });
 
     const dayEvents = this.getFilteredEvents(dateStr);
 
     if (dayEvents.length === 0) {
-      eventList.createEl("div", { cls: "day-no-events", text: "No events for this day" });
+      eventList.createEl("div", { cls: "real-calendar-day-no-events", text: "No events for this day" });
     } else {
       dayEvents.forEach(e => {
-        const eventItem = eventList.createEl("div", { cls: "day-event-item" });
+        const eventItem = eventList.createEl("div", { cls: "real-calendar-day-event-item" });
         eventItem.onclick = () => {
           void this.plugin.app.workspace.openLinkText(e.file.path, "", false);
         };
 
-        eventItem.createEl("div", { cls: "day-event-title", text: e.title });
+        eventItem.createEl("div", { cls: "real-calendar-day-event-title", text: e.title });
 
         if (e.startTime || e.endTime) {
-          const timeEl = eventItem.createEl("div", { cls: "day-event-time" });
+          const timeEl = eventItem.createEl("div", { cls: "real-calendar-day-event-time" });
           if (e.startTime && e.endTime) timeEl.setText(`${e.startTime} - ${e.endTime}`);
           else if (e.startTime) timeEl.setText(`${e.startTime}`);
           else if (e.endTime) timeEl.setText(`Until ${e.endTime}`);
         }
 
-        const statusEl = eventItem.createEl("div", { cls: "day-event-status" });
+        const statusEl = eventItem.createEl("div", { cls: "real-calendar-day-event-status" });
         if (e.done) {
           statusEl.createSpan({ text: "✓" });
           statusEl.appendText(" Completed");
-          statusEl.addClass("event-done");
+          statusEl.addClass("real-calendar-event-done");
         } else if (e.date < todayStr) {
           statusEl.createSpan({ text: "⚠" });
           statusEl.appendText(" Overdue");
-          statusEl.addClass("event-overdue");
+          statusEl.addClass("real-calendar-event-overdue");
         }
 
         this.addDeleteContextMenu(eventItem, e.file);

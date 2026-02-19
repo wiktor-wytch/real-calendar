@@ -1,4 +1,4 @@
-import { Plugin, WorkspaceLeaf, TFile, parseYaml } from "obsidian";
+import { Plugin, WorkspaceLeaf, TFile, parseYaml, debounce } from "obsidian";
 import { RealCalendarEmbedRenderer } from "./src/RealCalendarEmbedRenderer";
 import { RealCalendarView } from "./src/RealCalendarView";
 import { RealCalendarSettingTab } from "./src/RealCalendarSettingTab";
@@ -56,7 +56,7 @@ export default class RealCalendarPlugin extends Plugin {
   currentYear: number = new Date().getFullYear();
   currentDate: Date = new Date();
   viewMode: ViewMode = 'month';
-  private refreshTimeout: number | null = null;
+  private debouncedRefresh!: () => void;
   private isInitialized: boolean = false;
   private loadPromise: Promise<void> | null = null;
   embedRenderers: RealCalendarEmbedRenderer[] = [];
@@ -89,6 +89,10 @@ export default class RealCalendarPlugin extends Plugin {
         this.removeFileEvent(file);
       }
     }));
+
+    this.debouncedRefresh = debounce(() => {
+      void this.rescanVault().then(() => this.refreshCalendarView());
+    }, 10000, true);
 
     this.registerEvent(this.app.vault.on("rename", () => {
       if (this.isInitialized) this.debouncedRefresh();
@@ -179,15 +183,6 @@ export default class RealCalendarPlugin extends Plugin {
       this.loadPromise = null;
     });
     await this.loadPromise;
-  }
-
-  private debouncedRefresh() {
-    if (this.refreshTimeout) clearTimeout(this.refreshTimeout);
-    this.refreshTimeout = window.setTimeout(() => {
-      void this.rescanVault().then(() => {
-        this.refreshCalendarView();
-      });
-    }, 10000) as unknown as number;
   }
 
   private isInEventFolder(filePath: string): boolean {
@@ -349,11 +344,11 @@ export default class RealCalendarPlugin extends Plugin {
   }
 
   getMonthName(month: number): string {
-    return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][month];
+    return (window as Record<string, any>).moment.monthsShort()[month];
   }
 
   getDayName(day: number): string {
-    return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][day];
+    return (window as Record<string, any>).moment.weekdaysShort()[day];
   }
 
 
@@ -367,7 +362,6 @@ export default class RealCalendarPlugin extends Plugin {
   }
 
   onunload() {
-    if (this.refreshTimeout) clearTimeout(this.refreshTimeout);
     this.embedRenderers = [];
   }
 }
